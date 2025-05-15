@@ -1,0 +1,98 @@
+# slowsql-analysis
+
+> This project is optimized and enhanced based on [kbnote/slowsql-analysis](https://github.com/kbnote/slowsql-analysis).
+
+A MySQL slow query log analysis tool based on pt-query-digest, providing a user-friendly Web interface to display analysis results.
+
+[中文版](README.md)
+
+## Features
+
+- Support analysis of slow query logs within specified time ranges
+- Generate beautiful HTML reports for analysis results
+- Support web server for online report viewing
+- Automatically identify and group similar SQL queries
+- Provide detailed query performance metrics statistics
+- Support one-click SQL statement copying
+- Automatically mark different performance levels based on query time
+
+## Analysis Metrics
+
+- Query execution count statistics
+- Query time analysis (max, min, average, 95th percentile)
+- Row scan statistics
+- Lock wait time analysis
+- Involved tables statistics
+- Source user and host information
+
+## Usage
+
+### Basic Usage
+
+```bash
+./slowsql-analysis -f <slow query log path>
+```
+
+### Analyze Specific Time Range
+
+```bash
+./slowsql-analysis -f <slow query log path> -startTime="2024-04-16 00:00:00" -endTime="2024-04-16 23:59:59"
+```
+
+### Start Web Server
+
+```bash
+./slowsql-analysis -f <slow query log path> -port 6033
+```
+
+### Complete Parameter Description
+
+```
+Parameters:
+    -f          Slow query log file path (required)
+    -port       Web service port for browser access to reports (optional)
+    -startTime  Start time, format: yyyy-mm-dd HH:mm:ss (optional)
+    -endTime    End time, format: yyyy-mm-dd HH:mm:ss (optional)
+```
+
+## Report Description
+
+The generated HTML report includes:
+
+1. Slow Query Overview Table
+   - Sorted by 95th percentile execution time
+   - Performance levels automatically marked based on execution time
+   - Detailed SQL information available
+
+2. SQL Details Modal
+   - Complete SQL statement (with one-click copy)
+   - Query execution statistics
+   - List of involved tables
+   - Detailed performance metrics
+
+## Usage Examples
+
+1. Analyze slow queries from the last day:
+```bash
+./slowsql-analysis -f /var/log/mysql-slow.log -startTime="2024-04-16 00:00:00" -endTime="2024-04-16 23:59:59"
+```
+
+2. Start web server to view reports:
+```bash
+./slowsql-analysis -f /var/log/mysql-slow.log -port 6033
+```
+
+After generating the report, access it through your browser at `http://<server-ip>:6033/<report-filename>`.
+
+## Notes
+
+1. Ensure pt-query-digest tool is installed on your system
+2. Running directory must contain `cmd/pt-query-digest` and `template/template.html` files
+3. Ensure read permissions for the slow query log file
+4. In web server mode, ensure the specified port is not in use
+
+## Dependencies
+
+- Bootstrap 3.3.7
+- jQuery 3.3.1
+- clipboard.js 2.0.8 

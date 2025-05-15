@@ -1,6 +1,10 @@
 # slowsql-analysis
 
+> 本项目基于 [kbnote/slowsql-analysis](https://github.com/kbnote/slowsql-analysis) 进行优化和功能扩展。
+
 基于 pt-query-digest 工具的 MySQL 慢查询日志分析工具，提供友好的 Web 界面展示分析结果。
+
+[English Version](README_EN.md)
 
 ## 功能特性
 
