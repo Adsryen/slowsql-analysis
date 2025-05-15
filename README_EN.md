@@ -95,4 +95,42 @@ After generating the report, access it through your browser at `http://<server-i
 
 - Bootstrap 3.3.7
 - jQuery 3.3.1
-- clipboard.js 2.0.8 
+- clipboard.js 2.0.8
+
+## Build Instructions
+
+### Prerequisites
+
+- Go 1.22 or higher
+- pt-query-digest tool
+- MySQL (for generating slow query logs)
+
+### Installing Dependencies
+
+```bash
+# Install pt-query-digest
+# Ubuntu/Debian
+sudo apt-get install percona-toolkit
+
+# CentOS/RHEL
+sudo yum install percona-toolkit
+
+# Install Go dependencies
+go mod download
+```
+
+### Building the Project
+
+```bash
+# Compile the project
+go build -o slowsql-analysis
+
+# Run tests
+go test ./...
+```
+
+### Development Mode
+
+```bash
+go run main.go -f <slow query log path>
+``` 

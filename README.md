@@ -96,3 +96,41 @@
 - Bootstrap 3.3.7
 - jQuery 3.3.1
 - clipboard.js 2.0.8
+
+## 构建说明
+
+### 环境要求
+
+- Go 1.22 或更高版本
+- pt-query-digest 工具
+- MySQL（用于生成慢查询日志）
+
+### 安装依赖
+
+```bash
+# 安装 pt-query-digest
+# Ubuntu/Debian
+sudo apt-get install percona-toolkit
+
+# CentOS/RHEL
+sudo yum install percona-toolkit
+
+# 安装 Go 依赖
+go mod download
+```
+
+### 构建项目
+
+```bash
+# 编译项目
+go build -o slowsql-analysis
+
+# 运行测试
+go test ./...
+```
+
+### 开发模式运行
+
+```bash
+go run main.go -f <慢查询日志路径>
+```
