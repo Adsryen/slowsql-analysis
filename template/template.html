@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>Mysql慢查询报告</title>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+    <style>
+        .table thead th {
+            background-color: #337ab7;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            position: relative;
+        }
+        .table tbody td {
+            text-align: center;
+            vertical-align: middle !important;
+        }
+        .query-time-normal {
+            background-color: #ffffff;
+        }
+        .query-time-warning {
+            background-color: #fcf8e3;
+        }
+        .query-time-danger {
+            background-color: #f2dede;
+        }
+        .query-time-severe {
+            background-color: #d9534f;
+            color: white;
+        }
+        .sql-details {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .modal-dialog {
+            width: 80%;
+        }
+        .stats-label {
+            font-weight: bold;
+            color: #666;
+        }
+        .sql-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            z-index: 100;
+            padding: 4px 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #666;
+            opacity: 0.8;
+        }
+        .copy-btn:hover {
+            background-color: #e9ecef;
+            color: #333;
+            opacity: 1;
+        }
+        .copy-btn.copied {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: white;
+            opacity: 1;
+        }
+        pre.sql-content {
+            padding: 15px;
+            padding-right: 100px; /* 为复制按钮留出空间 */
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-top: 5px;
+            font-size: 13px;
+            line-height: 1.5;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+        
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>数据库</th>
+                    <th>用户账号</th>
+                    <th>主机</th>
+                    <th>查询次数</th>
+                    <th>平均执行时间</th>
+                    <th>最大执行时间</th>
+                    <th>95%执行时间</th>
+                    <th>总扫描行数</th>
+                    <th>平均扫描行数</th>
+                    <th>最大扫描行数</th>
+                    <th>最大锁等待</th>
+                    <th>涉及表</th>
+                    <th>SQL详情</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{range .}}
+                    {{if gt (float64 .Time95) 10.0}}
+                    <tr class="query-time-severe">
+                    {{else if gt (float64 .Time95) 5.0}}
+                    <tr class="query-time-danger">
+                    {{else if gt (float64 .Time95) 2.0}}
+                    <tr class="query-time-warning">
+                    {{else}}
+                    <tr class="query-time-normal">
+                    {{end}}
+                        <td>{{.Id}}</td>
+                        <td>{{.QueryDb}}</td>
+                        <td>{{.User}}</td>
+                        <td>{{.Host}}</td>
+                        <td>{{.QueryCount}}</td>
+                        <td>{{formatTime .TimeMedian}}</td>
+                        <td>{{formatTime .TimeMax}}</td>
+                        <td>{{formatTime .Time95}}</td>
+                        <td>{{.RowsSum}}</td>
+                        <td>{{.RowsMax}}</td>
+                        <td>{{.RowsMax}}</td>
+                        <td>{{formatTime .LockTimeMax}}</td>
+                        <td>{{.QueryTables}}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-{{.Id}}">
+                                查看SQL详情
+                            </button>
+                        </td>
+                    </tr>
+                {{end}}
+                </tbody>
+            </table>
+
+            {{range .}}
+            <!-- SQL详情模态框 -->
+            <div class="modal fade" id="modal-{{.Id}}" tabindex="-1" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">SQL详细信息</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="sql-details">
+                                <div class="alert alert-info">
+                                    <h4><i class="glyphicon glyphicon-info-sign"></i> 查询相似性说明</h4>
+                                    <p>pt-query-digest工具会对SQL查询进行规范化处理和分组统计：</p>
+                                    <ul>
+                                        <li>将具体的参数值替换为占位符（如：数字替换为"?"）</li>
+                                        <li>移除注释和多余的空白字符</li>
+                                        <li>统一关键字大小写</li>
+                                        <li>规范化后的SQL称为"SQL指纹"，相同指纹的SQL会被归为一组</li>
+                                        <li>下面显示的是该组中的一个示例SQL，实际执行时的具体参数值可能不同</li>
+                                    </ul>
+                                </div>
+                                
+                                <h4>示例SQL：</h4>
+                                <div class="sql-container">
+                                    <button class="copy-btn" data-clipboard-target="#sql-{{.Id}}">
+                                        <i class="glyphicon glyphicon-copy"></i> 复制SQL
+                                    </button>
+                                    <pre id="sql-{{.Id}}" class="sql-content">{{.Sql}}</pre>
+                                </div>
+                                
+                                <h4>执行统计：</h4>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <td class="stats-label">总执行次数</td>
+                                        <td>{{.QueryCount}}</td>
+                                        <td class="stats-label">来自主机</td>
+                                        <td>{{.Host}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label">最大执行时间</td>
+                                        <td>{{formatTime .TimeMax}}</td>
+                                        <td class="stats-label">95%执行时间</td>
+                                        <td>{{formatTime .Time95}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label">最大锁等待</td>
+                                        <td>{{formatTime .LockTimeMax}}</td>
+                                        <td class="stats-label">95%锁等待</td>
+                                        <td>{{formatTime .LockTime95}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label">最大扫描行数</td>
+                                        <td>{{.RowsMax}}</td>
+                                        <td class="stats-label">总扫描行数</td>
+                                        <td>{{.RowsSum}}</td>
+                                    </tr>
+                                </table>
+
+                                <h4>涉及表：</h4>
+                                <pre>{{.QueryTables}}</pre>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" data-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+<script>
+    $(document).ready(function(){
+        // 初始化clipboard.js
+        var clipboard = new ClipboardJS('.copy-btn');
+        
+        clipboard.on('success', function(e) {
+            var btn = e.trigger;
+            btn.innerHTML = '<i class="glyphicon glyphicon-ok"></i> 已复制';
+            btn.classList.add('copied');
+            
+            setTimeout(function() {
+                btn.innerHTML = '<i class="glyphicon glyphicon-copy"></i> 复制SQL';
+                btn.classList.remove('copied');
+            }, 2000);
+            
+            e.clearSelection();
+        });
+
+        clipboard.on('error', function(e) {
+            var btn = e.trigger;
+            btn.innerHTML = '<i class="glyphicon glyphicon-remove"></i> 复制失败';
+            btn.style.backgroundColor = '#dc3545';
+            btn.style.borderColor = '#dc3545';
+            btn.style.color = 'white';
+            
+            setTimeout(function() {
+                btn.innerHTML = '<i class="glyphicon glyphicon-copy"></i> 复制SQL';
+                btn.style.backgroundColor = '';
+                btn.style.borderColor = '';
+                btn.style.color = '';
+            }, 2000);
+        });
+    });
+</script>
+
+</body>
+</html>
+
