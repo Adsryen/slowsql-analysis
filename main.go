@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"path/filepath"
 	"regexp"
 	"sort"
 	"strconv"
@@ -16,6 +18,12 @@ import (
 	"syscall"
 	"time"
 )
+
+//go:embed template/template.html
+var templateFS embed.FS
+
+//go:embed cmd/pt-query-digest
+var ptQueryDigest []byte
 
 const helpText = `慢查询日志分析工具 v1.0
 
@@ -145,6 +153,90 @@ func getLocalIPs() ([]string, error) {
 	return ips, nil
 }
 
+// 在 main 函数之前添加这个新函数
+func checkAndSetPermissions(filePath string) error {
+	// 检查文件是否存在
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		return fmt.Errorf("文件不存在: %s", filePath)
+	}
+
+	// 获取文件信息
+	info, err := os.Stat(filePath)
+	if err != nil {
+		return fmt.Errorf("无法获取文件信息: %s", err)
+	}
+
+	// 检查是否有执行权限
+	if info.Mode()&0111 == 0 {
+		// 尝试添加执行权限
+		err = os.Chmod(filePath, info.Mode()|0111)
+		if err != nil {
+			return fmt.Errorf("无法设置执行权限: %s", err)
+		}
+		printColoredInfo("yellow", "已添加执行权限: %s", filePath)
+	}
+
+	return nil
+}
+
+// 在 main 函数之前添加这个新函数
+func checkSystemEnvironment() {
+	// 检查 /bin/bash 是否存在
+	if _, err := os.Stat("/bin/bash"); os.IsNotExist(err) {
+		printColoredInfo("red", "系统缺少 /bin/bash")
+		os.Exit(1)
+	}
+
+	// 检查 SELinux 状态
+	if _, err := os.Stat("/etc/selinux/config"); err == nil {
+		// 读取 SELinux 状态
+		cmd := exec.Command("getenforce")
+		output, err := cmd.Output()
+		if err == nil {
+			status := strings.TrimSpace(string(output))
+			if status == "Enforcing" {
+				printColoredInfo("yellow", "警告: SELinux 处于强制模式，可能会影响程序运行")
+				printColoredInfo("yellow", "如果遇到权限问题，可以尝试: sudo setenforce 0")
+			}
+		}
+	}
+
+	// 检查临时目录权限
+	tempDir := os.TempDir()
+	info, err := os.Stat(tempDir)
+	if err != nil {
+		printColoredInfo("yellow", "警告: 无法获取临时目录信息")
+		return
+	}
+	if info.Mode().Perm()&0022 == 0 {
+		printColoredInfo("yellow", "警告: 临时目录可能没有足够的写入权限")
+	}
+}
+
+// 在 checkSystemEnvironment 函数之后添加
+func checkPerlModules() {
+	// 检查必要的 Perl 模块
+	modules := []string{
+		"DBI",
+		"DBD::mysql",
+		"Digest::MD5",
+		"Time::HiRes",
+		"IO::Socket::SSL",
+		"Term::ReadKey",
+	}
+
+	for _, module := range modules {
+		cmd := exec.Command("perl", "-e", fmt.Sprintf("use %s;", module))
+		if err := cmd.Run(); err != nil {
+			printColoredInfo("yellow", "警告: Perl模块 %s 未安装", module)
+			printColoredInfo("blue", "您可以使用以下命令安装所需依赖:")
+			printColoredInfo("blue", "CentOS/RHEL: yum install -y perl-DBI perl-DBD-MySQL perl-Time-HiRes perl-IO-Socket-SSL perl-Digest-MD5 perl-TermReadKey")
+			printColoredInfo("blue", "Ubuntu/Debian: apt-get install -y libdbi-perl libdbd-mysql-perl libtime-hires-perl libio-socket-ssl-perl libdigest-md5-perl libterm-readkey-perl")
+			os.Exit(1)
+		}
+	}
+}
+
 func main() {
 	execStartTime := time.Now()
 	
@@ -163,7 +255,6 @@ func main() {
 			os.Exit(1)
 		}
 		
-		// 更新日志文件路径
 		*logAddress = input
 	}
 
@@ -175,17 +266,59 @@ func main() {
 	}
 	printDivider()
 
+	// 检查系统环境
+	checkSystemEnvironment()
+	
+	// 检查 Perl 模块
+	checkPerlModules()
+
+	// 创建临时目录
+	tempDir, err := os.MkdirTemp("", "slowsql-analysis")
+	if err != nil {
+		printColoredInfo("red", "创建临时目录失败: %s", err.Error())
+		os.Exit(1)
+	}
+	defer os.RemoveAll(tempDir)
+
+	// 将pt-query-digest写入临时目录
+	ptQueryDigestPath := filepath.Join(tempDir, "pt-query-digest")
+	err = os.WriteFile(ptQueryDigestPath, ptQueryDigest, 0755)
+	if err != nil {
+		printColoredInfo("red", "写入pt-query-digest失败: %s", err.Error())
+		os.Exit(1)
+	}
+
+	// 检查并设置权限
+	if err := checkAndSetPermissions(ptQueryDigestPath); err != nil {
+		printColoredInfo("red", "权限检查失败: %s", err)
+		os.Exit(1)
+	}
+
 	var ptCmd string
 	if *startTime == "" || *endTime == "" {
-		ptCmd = fmt.Sprintf("./cmd/pt-query-digest  %s --output json  --noversion-check --progress time,1 --charset=utf8mb4 >mysql_slow.json", *logAddress)
+		ptCmd = fmt.Sprintf("%s %s --output json --noversion-check --progress time,1 --charset=utf8mb4 >mysql_slow.json", ptQueryDigestPath, *logAddress)
 	} else {
-		ptCmd = fmt.Sprintf("./cmd/pt-query-digest  %s --output json  --noversion-check --set-vars time_zone='+8:00' --progress time,1 --charset=utf8mb4 --since='%s' --until='%s' >mysql_slow.json", *logAddress, *startTime, *endTime)
+		ptCmd = fmt.Sprintf("%s %s --output json --noversion-check --set-vars time_zone='+8:00' --progress time,1 --charset=utf8mb4 --since='%s' --until='%s' >mysql_slow.json", ptQueryDigestPath, *logAddress, *startTime, *endTime)
 	}
 
 	printColoredInfo("yellow", "正在执行日志分析...")
 	cmd := exec.Command("/bin/bash", "-c", ptCmd)
+	
+	// 捕获标准错误输出
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+	
 	if err := cmd.Run(); err != nil {
-		printColoredInfo("red", "分析过程出错: %s", err.Error())
+		if _, ok := err.(*exec.ExitError); ok {
+			printColoredInfo("red", "分析过程出错: %v", err)
+			printColoredInfo("yellow", "详细错误信息:")
+			printColoredInfo("red", "1. 请检查日志文件权限是否正确")
+			printColoredInfo("red", "2. 请检查是否有执行权限")
+			printColoredInfo("red", "3. 如果是SELinux相关问题，可以尝试临时关闭: sudo setenforce 0")
+			printColoredInfo("red", "4. 使用 strace 命令查看详细错误: strace ./slowsql-analysis-linux-amd64 -port 6033 -f mysql-slow.log")
+		} else {
+			printColoredInfo("red", "执行命令失败: %v", err)
+		}
 		os.Exit(1)
 	}
 
@@ -287,8 +420,14 @@ func main() {
 
 	printColoredInfo("yellow", "正在生成HTML报告...")
 	
-	// 使用自定义函数创建新模板
-	tmpl, err := template.New("template.html").Funcs(funcMap).ParseFiles("./template/template.html")
+	// 使用嵌入的模板文件
+	tmplContent, err := templateFS.ReadFile("template/template.html")
+	if err != nil {
+		printColoredInfo("red", "读取模板文件失败: %s", err.Error())
+		os.Exit(1)
+	}
+
+	tmpl, err := template.New("template.html").Funcs(funcMap).Parse(string(tmplContent))
 	if err != nil {
 		printColoredInfo("red", "创建HTML模板失败: %s", err.Error())
 		os.Exit(1)
@@ -300,7 +439,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	// 输出统计信息
+	// 清理临时文件
+	os.Remove("mysql_slow.json")
+
 	printDivider()
 	printColoredInfo("green", "分析完成!")
 	printColoredInfo("blue", "统计信息:")
