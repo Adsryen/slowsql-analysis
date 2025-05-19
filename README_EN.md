@@ -15,17 +15,52 @@ A MySQL slow query log analysis tool based on pt-query-digest, providing a user-
 - Provide detailed query performance metrics statistics
 - Support one-click SQL statement copying
 - Automatically mark different performance levels based on query time
+- Support multi-platform operation (Linux/Windows/macOS)
+- Built-in pt-query-digest tool, no additional installation required
+- Automatic system environment and dependency detection
+- Support UTF-8 encoded log files
 
 ## Analysis Metrics
 
-- Query execution count statistics
-- Query time analysis (max, min, average, 95th percentile)
-- Row scan statistics
-- Lock wait time analysis
-- Involved tables statistics
-- Source user and host information
+### Basic Requirements
+- Operating System: Linux, Windows or macOS
+- Perl Runtime Environment (5.10 or higher)
+
+### Perl Module Dependencies
+- DBI
+- DBD::mysql
+- Digest::MD5
+- Time::HiRes
+- IO::Socket::SSL
+- Term::ReadKey
+
+### Installing Dependencies
+
+CentOS/RHEL:
+```bash
+yum install -y perl-DBI perl-DBD-MySQL perl-Time-HiRes perl-IO-Socket-SSL perl-Digest-MD5 perl-TermReadKey
+```
+
+Ubuntu/Debian:
+```bash
+apt-get install -y libdbi-perl libdbd-mysql-perl libtime-hires-perl libio-socket-ssl-perl libdigest-md5-perl libterm-readkey-perl
+```
 
 ## Usage
+
+### Download and Installation
+
+1. Download the binary file for your platform from the Release page:
+   - Linux AMD64: `slowsql-analysis-linux-amd64`
+   - Linux ARM64: `slowsql-analysis-linux-arm64`
+   - Windows: `slowsql-analysis-windows-amd64.exe`
+   - macOS Intel: `slowsql-analysis-darwin-amd64`
+   - macOS M1/M2: `slowsql-analysis-darwin-arm64`
+
+2. Add execution permissions (Linux/macOS):
+```bash
+chmod +x slowsql-analysis-*
+```
 
 ### Basic Usage
 

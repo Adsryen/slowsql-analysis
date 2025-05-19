@@ -15,17 +15,52 @@
 - 提供详细的查询性能指标统计
 - 支持 SQL 语句的一键复制
 - 根据查询时间自动标记不同性能等级
+- 支持多平台运行（Linux/Windows/macOS）
+- 内置 pt-query-digest 工具，无需额外安装
+- 自动检测系统环境和依赖
+- 支持 UTF-8 编码的日志文件
 
 ## 分析指标
 
-- 查询执行次数统计
-- 查询时间分析（最大、最小、平均、95%）
-- 扫描行数统计
-- 锁等待时间分析
-- 涉及数据表统计
-- 来源用户和主机信息
+### 基本要求
+- 操作系统：Linux、Windows 或 macOS
+- Perl 运行环境（5.10 或更高版本）
+
+### Perl 模块依赖
+- DBI
+- DBD::mysql
+- Digest::MD5
+- Time::HiRes
+- IO::Socket::SSL
+- Term::ReadKey
+
+### 依赖安装
+
+CentOS/RHEL:
+```bash
+yum install -y perl-DBI perl-DBD-MySQL perl-Time-HiRes perl-IO-Socket-SSL perl-Digest-MD5 perl-TermReadKey
+```
+
+Ubuntu/Debian:
+```bash
+apt-get install -y libdbi-perl libdbd-mysql-perl libtime-hires-perl libio-socket-ssl-perl libdigest-md5-perl libterm-readkey-perl
+```
 
 ## 使用方法
+
+### 下载和安装
+
+1. 从 Release 页面下载对应平台的二进制文件：
+   - Linux AMD64: `slowsql-analysis-linux-amd64`
+   - Linux ARM64: `slowsql-analysis-linux-arm64`
+   - Windows: `slowsql-analysis-windows-amd64.exe`
+   - macOS Intel: `slowsql-analysis-darwin-amd64`
+   - macOS M1/M2: `slowsql-analysis-darwin-arm64`
+
+2. 添加执行权限（Linux/macOS）：
+```bash
+chmod +x slowsql-analysis-*
+```
 
 ### 基本用法
 
