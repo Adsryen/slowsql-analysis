@@ -29,6 +29,8 @@ type ReportData struct {
 	GenerateTime string
 	SlowQueries  []SlowSqlInfo
 	LogFiles     []string
+	StartTime    string
+	EndTime      string
 }
 
 const helpText = `慢查询日志分析工具 v1.0
@@ -260,6 +262,19 @@ func checkPerlModules() {
 	}
 }
 
+func formatMysqlTimestamp(timestamp string) string {
+	if timestamp == "" {
+		return ""
+	}
+	// 解析MySQL时间戳格式
+	t, err := time.Parse("060102 15:04:05", timestamp)
+	if err != nil {
+		return timestamp // 如果解析失败，返回原始字符串
+	}
+	// 转换为更易读的格式
+	return t.Format("2006-01-02 15:04:05")
+}
+
 func main() {
 	execStartTime := time.Now()
 	
@@ -432,6 +447,24 @@ func main() {
 		LogFiles:     logAddresses,
 	}
 
+	// 从所有查询中找出最早和最晚的时间
+	if len(report.Classes) > 0 {
+		minTime := report.Classes[0].TsMin
+		maxTime := report.Classes[0].TsMax
+		
+		for _, class := range report.Classes {
+			if class.TsMin < minTime {
+				minTime = class.TsMin
+			}
+			if class.TsMax > maxTime {
+				maxTime = class.TsMax
+			}
+		}
+		
+		reportData.StartTime = formatMysqlTimestamp(minTime)
+		reportData.EndTime = formatMysqlTimestamp(maxTime)
+	}
+
 	// 添加自定义模板函数
 	funcMap := template.FuncMap{
 		"float64": func(s string) float64 {
@@ -493,6 +526,7 @@ func main() {
 	printColoredInfo("blue", "- 分析的日志文件数: %d", len(logAddresses))
 	printColoredInfo("blue", "- 总分析SQL数: %d", len(slowSqlInfos))
 	printColoredInfo("blue", "- 分析耗时: %.2f秒", time.Since(execStartTime).Seconds())
+	printColoredInfo("blue", "- 日志时间范围: %s 至 %s", reportData.StartTime, reportData.EndTime)
 	printColoredInfo("blue", "- 报告文件: %s", fileName)
 	printDivider()
 
@@ -513,6 +547,8 @@ type Report struct {
 			Size int    `json:"size"`
 		} `json:"files"`
 		QueryCount int `json:"query_count"`
+		TsMin      string `json:"ts_min"`
+		TsMax      string `json:"ts_max"`
 		Metrics    struct {
 			QueryLength struct {
 				Sum    string `json:"sum"`
