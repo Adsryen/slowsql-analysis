@@ -6,6 +6,17 @@
 
 [English Version](README_EN.md)
 
+## 目录
+
+- [功能特性](#功能特性)
+- [系统要求](#系统要求)
+- [快速开始](#快速开始)
+- [详细配置](#详细配置)
+- [性能指标说明](#性能指标说明)
+- [使用场景](#使用场景)
+- [故障排除](#故障排除)
+- [开发指南](#开发指南)
+
 ## 功能特性
 
 - 支持分析指定时间范围的慢查询日志
@@ -20,11 +31,13 @@
 - 自动检测系统环境和依赖
 - 支持 UTF-8 编码的日志文件
 
-## 分析指标
+## 系统要求
 
-### 基本要求
+### 基本环境
 - 操作系统：Linux、Windows 或 macOS
 - Perl 运行环境（5.10 或更高版本）
+- 内存：建议 2GB 以上
+- 磁盘空间：至少 100MB 可用空间
 
 ### Perl 模块依赖
 - DBI
@@ -46,64 +59,108 @@ Ubuntu/Debian:
 apt-get install -y libdbi-perl libdbd-mysql-perl libtime-hires-perl libio-socket-ssl-perl libdigest-md5-perl libterm-readkey-perl
 ```
 
-## 使用方法
+## 快速开始
 
-### 下载和安装
+### 1. 下载安装
 
-1. 从 Release 页面下载对应平台的二进制文件：
-   - Linux AMD64: `slowsql-analysis-linux-amd64`
-   - Linux ARM64: `slowsql-analysis-linux-arm64`
-   - Windows: `slowsql-analysis-windows-amd64.exe`
-   - macOS Intel: `slowsql-analysis-darwin-amd64`
-   - macOS M1/M2: `slowsql-analysis-darwin-arm64`
+从 build文件夹 下载对应平台的二进制文件：
 
-2. 添加执行权限（Linux/macOS）：
+| 平台 | 文件名 |
+|------|--------|
+| Linux AMD64 | `slowsql-analysis-linux-amd64` |
+| Linux ARM64 | `slowsql-analysis-linux-arm64` |
+| Windows | `slowsql-analysis-windows-amd64.exe` |
+| macOS Intel | `slowsql-analysis-darwin-amd64` |
+| macOS M1/M2 | `slowsql-analysis-darwin-arm64` |
+
+### 2. 基本使用
+
 ```bash
+# Linux/macOS 添加执行权限
 chmod +x slowsql-analysis-*
-```
 
-### 基本用法
-
-```bash
+# 分析慢查询日志
 ./slowsql-analysis -f <慢查询日志路径>
-```
 
-### 指定时间范围分析
-
-```bash
-./slowsql-analysis -f <慢查询日志路径> -startTime="2024-04-16 00:00:00" -endTime="2024-04-16 23:59:59"
-```
-
-### 启动 Web 服务
-
-```bash
+# 启动Web服务（默认端口6033）
 ./slowsql-analysis -f <慢查询日志路径> -port 6033
 ```
 
-### 完整参数说明
+## 详细配置
 
+### 命令行参数
+
+| 参数 | 说明 | 是否必需 | 默认值 | 示例 |
+|------|------|----------|--------|------|
+| -f | 慢查询日志文件路径 | 是 | - | `/var/log/mysql-slow.log` |
+| -port | Web服务端口 | 否 | 6033 | `8080` |
+| -startTime | 开始时间 | 否 | - | `2024-04-16 00:00:00` |
+| -endTime | 结束时间 | 否 | - | `2024-04-16 23:59:59` |
+
+## 性能指标说明
+
+### 关键指标解释
+
+1. **Query Time Metrics**
+   - `Query_time`: SQL执行时间
+   - `95%`: 95%的查询执行时间
+   - `99%`: 99%的查询执行时间
+   - `Max_Query_Time`: 最长查询时间
+
+2. **Lock Metrics**
+   - `Lock_time`: 锁等待时间
+   - `Rows_examined`: 扫描行数
+   - `Rows_sent`: 返回行数
+
+3. **性能等级**
+   - 🟢 良好：< 1秒
+   - 🟡 警告：1-5秒
+   - 🔴 严重：> 5秒
+
+## 使用场景
+
+### 1. 日常监控
+```bash
+# 每天凌晨分析前一天的慢查询
+0 1 * * * /path/to/slowsql-analysis -f /var/log/mysql-slow.log -startTime="$(date -d 'yesterday' +'%Y-%m-%d 00:00:00')" -endTime="$(date -d 'yesterday' +'%Y-%m-%d 23:59:59')"
 ```
-参数:
-    -f          慢查询日志文件路径（必需）
-    -port       Web服务端口，设置后可通过浏览器访问报告（可选）
-    -startTime  开始时间，格式：yyyy-mm-dd HH:mm:ss（可选）
-    -endTime    结束时间，格式：yyyy-mm-dd HH:mm:ss（可选）
+
+### 2. 性能优化
+```bash
+# 分析特定时间段的慢查询
+./slowsql-analysis -f /var/log/mysql-slow.log -startTime="2024-04-16 10:00:00" -endTime="2024-04-16 12:00:00"
 ```
 
-## 报告说明
+### 3. 实时监控
+```bash
+# 启动Web服务持续监控
+./slowsql-analysis -f /var/log/mysql-slow.log -port 6033
+```
 
-生成的 HTML 报告包含以下内容：
+## 故障排除
 
-1. 慢查询概览表格
-   - 按 95% 执行时间降序排列
-   - 根据执行时间自动标记性能等级
-   - 支持查看详细 SQL 信息
+### 常见问题
 
-2. SQL 详情弹窗
-   - 完整 SQL 语句（支持一键复制）
-   - 查询执行统计信息
-   - 涉及数据表列表
-   - 性能指标详细统计
+1. **无法启动服务**
+   - 检查端口是否被占用
+   - 确认是否有足够权限
+   - 验证防火墙设置
+
+2. **分析报告为空**
+   - 确认日志文件权限
+   - 验证日志格式是否正确
+   - 检查时间范围设置
+
+3. **性能问题**
+   - 建议日志文件大小 < 1GB
+   - 避免分析过长时间范围
+   - 考虑增加系统内存
+
+### 日志说明
+
+程序运行日志位于：
+- Linux/macOS: `/var/log/slowsql-analysis.log`
+- Windows: `C:\ProgramData\slowsql-analysis\logs\`
 
 ## 使用示例
 

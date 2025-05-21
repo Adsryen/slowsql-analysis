@@ -6,6 +6,17 @@ A MySQL slow query log analysis tool based on pt-query-digest, providing a user-
 
 [中文版](README.md)
 
+## Table of Contents
+
+- [Features](#features)
+- [System Requirements](#system-requirements)
+- [Quick Start](#quick-start)
+- [Detailed Configuration](#detailed-configuration)
+- [Performance Metrics](#performance-metrics)
+- [Usage Scenarios](#usage-scenarios)
+- [Troubleshooting](#troubleshooting)
+- [Development Guide](#development-guide)
+
 ## Features
 
 - Support analysis of slow query logs within specified time ranges
@@ -20,11 +31,13 @@ A MySQL slow query log analysis tool based on pt-query-digest, providing a user-
 - Automatic system environment and dependency detection
 - Support UTF-8 encoded log files
 
-## Analysis Metrics
+## System Requirements
 
 ### Basic Requirements
 - Operating System: Linux, Windows or macOS
 - Perl Runtime Environment (5.10 or higher)
+- Memory: 2GB or more recommended
+- Disk Space: At least 100MB free space
 
 ### Perl Module Dependencies
 - DBI
@@ -46,64 +59,108 @@ Ubuntu/Debian:
 apt-get install -y libdbi-perl libdbd-mysql-perl libtime-hires-perl libio-socket-ssl-perl libdigest-md5-perl libterm-readkey-perl
 ```
 
-## Usage
+## Quick Start
 
-### Download and Installation
+### 1. Download and Installation
 
-1. Download the binary file for your platform from the Release page:
-   - Linux AMD64: `slowsql-analysis-linux-amd64`
-   - Linux ARM64: `slowsql-analysis-linux-arm64`
-   - Windows: `slowsql-analysis-windows-amd64.exe`
-   - macOS Intel: `slowsql-analysis-darwin-amd64`
-   - macOS M1/M2: `slowsql-analysis-darwin-arm64`
+Download the binary file for your platform from the Release page:
 
-2. Add execution permissions (Linux/macOS):
+| Platform | Filename |
+|----------|----------|
+| Linux AMD64 | `slowsql-analysis-linux-amd64` |
+| Linux ARM64 | `slowsql-analysis-linux-arm64` |
+| Windows | `slowsql-analysis-windows-amd64.exe` |
+| macOS Intel | `slowsql-analysis-darwin-amd64` |
+| macOS M1/M2 | `slowsql-analysis-darwin-arm64` |
+
+### 2. Basic Usage
+
 ```bash
+# Add execution permissions (Linux/macOS)
 chmod +x slowsql-analysis-*
-```
 
-### Basic Usage
-
-```bash
+# Analyze slow query log
 ./slowsql-analysis -f <slow query log path>
-```
 
-### Analyze Specific Time Range
-
-```bash
-./slowsql-analysis -f <slow query log path> -startTime="2024-04-16 00:00:00" -endTime="2024-04-16 23:59:59"
-```
-
-### Start Web Server
-
-```bash
+# Start web server (default port 6033)
 ./slowsql-analysis -f <slow query log path> -port 6033
 ```
 
-### Complete Parameter Description
+## Detailed Configuration
 
+### Command Line Parameters
+
+| Parameter | Description | Required | Default | Example |
+|-----------|-------------|----------|---------|---------|
+| -f | Slow query log file path | Yes | - | `/var/log/mysql-slow.log` |
+| -port | Web service port | No | 6033 | `8080` |
+| -startTime | Start time | No | - | `2024-04-16 00:00:00` |
+| -endTime | End time | No | - | `2024-04-16 23:59:59` |
+
+## Performance Metrics
+
+### Key Metrics Explained
+
+1. **Query Time Metrics**
+   - `Query_time`: SQL execution time
+   - `95%`: 95th percentile query execution time
+   - `99%`: 99th percentile query execution time
+   - `Max_Query_Time`: Maximum query time
+
+2. **Lock Metrics**
+   - `Lock_time`: Lock wait time
+   - `Rows_examined`: Number of rows scanned
+   - `Rows_sent`: Number of rows returned
+
+3. **Performance Levels**
+   - 🟢 Good: < 1 second
+   - 🟡 Warning: 1-5 seconds
+   - 🔴 Critical: > 5 seconds
+
+## Usage Scenarios
+
+### 1. Daily Monitoring
+```bash
+# Analyze previous day's slow queries at midnight
+0 1 * * * /path/to/slowsql-analysis -f /var/log/mysql-slow.log -startTime="$(date -d 'yesterday' +'%Y-%m-%d 00:00:00')" -endTime="$(date -d 'yesterday' +'%Y-%m-%d 23:59:59')"
 ```
-Parameters:
-    -f          Slow query log file path (required)
-    -port       Web service port for browser access to reports (optional)
-    -startTime  Start time, format: yyyy-mm-dd HH:mm:ss (optional)
-    -endTime    End time, format: yyyy-mm-dd HH:mm:ss (optional)
+
+### 2. Performance Optimization
+```bash
+# Analyze slow queries for a specific time period
+./slowsql-analysis -f /var/log/mysql-slow.log -startTime="2024-04-16 10:00:00" -endTime="2024-04-16 12:00:00"
 ```
 
-## Report Description
+### 3. Real-time Monitoring
+```bash
+# Start web server for continuous monitoring
+./slowsql-analysis -f /var/log/mysql-slow.log -port 6033
+```
 
-The generated HTML report includes:
+## Troubleshooting
 
-1. Slow Query Overview Table
-   - Sorted by 95th percentile execution time
-   - Performance levels automatically marked based on execution time
-   - Detailed SQL information available
+### Common Issues
 
-2. SQL Details Modal
-   - Complete SQL statement (with one-click copy)
-   - Query execution statistics
-   - List of involved tables
-   - Detailed performance metrics
+1. **Service Won't Start**
+   - Check if the port is already in use
+   - Verify sufficient permissions
+   - Check firewall settings
+
+2. **Empty Analysis Report**
+   - Verify log file permissions
+   - Check if log format is correct
+   - Verify time range settings
+
+3. **Performance Issues**
+   - Recommended log file size < 1GB
+   - Avoid analyzing too long time ranges
+   - Consider increasing system memory
+
+### Log Information
+
+Program logs are located at:
+- Linux/macOS: `/var/log/slowsql-analysis.log`
+- Windows: `C:\ProgramData\slowsql-analysis\logs\`
 
 ## Usage Examples
 
