@@ -25,44 +25,63 @@ var templateFS embed.FS
 //go:embed cmd/pt-query-digest
 var ptQueryDigest []byte
 
+type ReportData struct {
+	GenerateTime string
+	SlowQueries  []SlowSqlInfo
+	LogFiles     []string
+}
+
 const helpText = `慢查询日志分析工具 v1.0
 
 用法: 
-    ./slowsql-analysis -f <慢查询日志路径> [-port <端口>] [-startTime <开始时间>] [-endTime <结束时间>]
+    ./slowsql-analysis -f <慢查询日志路径1> [-f <慢查询日志路径2> ...] [-port <端口>] [-startTime <开始时间>] [-endTime <结束时间>]
 
 参数:
-    -f          慢查询日志文件路径
+    -f          慢查询日志文件路径（可指定多个）
     -port       Web服务端口，设置后可通过浏览器访问报告
     -startTime  开始时间 (可选，格式: yyyy-mm-dd HH:mm:ss)
     -endTime    结束时间 (可选，格式: yyyy-mm-dd HH:mm:ss)
 
 示例:
     1. 基本分析:
-       ./slowsql-analysis -f /var/log/mysql-slow.log
+       ./slowsql-analysis -f /var/log/mysql-slow1.log -f /var/log/mysql-slow2.log
 
     2. 启动Web服务:
-       ./slowsql-analysis -f /var/log/mysql-slow.log -port 6033
+       ./slowsql-analysis -f /var/log/mysql-slow1.log -f /var/log/mysql-slow2.log -port 6033
 
     3. 指定时间范围:
-       ./slowsql-analysis -f /var/log/mysql-slow.log -startTime="2024-04-16 00:00:00" -endTime="2024-04-16 23:59:59"
+       ./slowsql-analysis -f /var/log/mysql-slow1.log -f /var/log/mysql-slow2.log -startTime="2024-04-16 00:00:00" -endTime="2024-04-16 23:59:59"
 
     4. 完整功能:
-       ./slowsql-analysis -f /var/log/mysql-slow.log -port 6033 -startTime="2024-04-16 00:00:00" -endTime="2024-04-16 23:59:59"
+       ./slowsql-analysis -f /var/log/mysql-slow1.log -f /var/log/mysql-slow2.log -port 6033 -startTime="2024-04-16 00:00:00" -endTime="2024-04-16 23:59:59"
 
 输出:
-    生成的报告文件格式: <原始日志名>-<生成时间>.html
+    生成的报告文件格式: slowsql-analysis-<生成时间>.html
     如果指定了端口，可以通过浏览器访问: http://<IP>:<端口>/<报告文件名>`
 
 func init() {
 	flag.Usage = func() {
 		printColoredInfo("blue", helpText)
 	}
+	flag.Var(&logAddresses, "f", "慢查询日志文件路径（可指定多个）")
 }
 
-var logAddress = flag.String("f", "", "慢查询日志文件路径")
+var logAddresses arrayFlags
 var startTime = flag.String("startTime", "", "分析开始时间 (格式: yyyy-mm-dd HH:mm:ss)")
 var endTime = flag.String("endTime", "", "分析结束时间 (格式: yyyy-mm-dd HH:mm:ss)")
 var port = flag.Int("port", 0, "Web服务端口，设置后可通过浏览器访问报告")
+
+// 自定义类型用于支持多个-f参数
+type arrayFlags []string
+
+func (i *arrayFlags) String() string {
+	return strings.Join(*i, ",")
+}
+
+func (i *arrayFlags) Set(value string) error {
+	*i = append(*i, value)
+	return nil
+}
 
 // 打印分隔线
 func printDivider() {
@@ -96,7 +115,11 @@ func (s SlowSqlInfoSliceDecrement) Len() int { return len(s) }
 
 func (s SlowSqlInfoSliceDecrement) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
-func (s SlowSqlInfoSliceDecrement) Less(i, j int) bool { return s[i].Time95 > s[j].Time95 }
+func (s SlowSqlInfoSliceDecrement) Less(i, j int) bool { 
+	time95i, _ := strconv.ParseFloat(s[i].Time95, 64)
+	time95j, _ := strconv.ParseFloat(s[j].Time95, 64)
+	return time95i > time95j 
+}
 
 func getBaseFileName(logPath string) string {
 	// 获取文件名（不含路径）
@@ -242,9 +265,9 @@ func main() {
 	
 	flag.Parse()
 
-	if *logAddress == "" {
-		printColoredInfo("blue", "使用方法: ./slowsql-analysis -f <慢查询日志路径> [-port <端口>]")
-		printColoredInfo("blue", "示例: ./slowsql-analysis -f /var/log/mysql-slow.log -port 6033")
+	if len(logAddresses) == 0 {
+		printColoredInfo("blue", "使用方法: ./slowsql-analysis -f <慢查询日志路径1> [-f <慢查询日志路径2> ...] [-port <端口>]")
+		printColoredInfo("blue", "示例: ./slowsql-analysis -f /var/log/mysql-slow1.log -f /var/log/mysql-slow2.log -port 6033")
 		printColoredInfo("yellow", "请输入慢查询日志文件路径: ")
 		
 		// 读取用户输入
@@ -255,12 +278,14 @@ func main() {
 			os.Exit(1)
 		}
 		
-		*logAddress = input
+		logAddresses = append(logAddresses, input)
 	}
 
 	printDivider()
 	printColoredInfo("blue", "开始分析慢查询日志...")
-	printColoredInfo("blue", "日志文件: %s", *logAddress)
+	for i, logAddress := range logAddresses {
+		printColoredInfo("blue", "日志文件%d: %s", i+1, logAddress)
+	}
 	if *startTime != "" && *endTime != "" {
 		printColoredInfo("blue", "分析时间范围: %s 至 %s", *startTime, *endTime)
 	}
@@ -294,11 +319,19 @@ func main() {
 		os.Exit(1)
 	}
 
+	// 检查所有日志文件是否存在
+	for _, logAddress := range logAddresses {
+		if _, err := os.Stat(logAddress); os.IsNotExist(err) {
+			printColoredInfo("red", "日志文件不存在: %s", logAddress)
+			os.Exit(1)
+		}
+	}
+
 	var ptCmd string
 	if *startTime == "" || *endTime == "" {
-		ptCmd = fmt.Sprintf("%s %s --output json --noversion-check --progress time,1 --charset=utf8mb4 >mysql_slow.json", ptQueryDigestPath, *logAddress)
+		ptCmd = fmt.Sprintf("%s %s --output json --noversion-check --progress time,1 --charset=utf8mb4 >mysql_slow.json", ptQueryDigestPath, strings.Join(logAddresses, " "))
 	} else {
-		ptCmd = fmt.Sprintf("%s %s --output json --noversion-check --set-vars time_zone='+8:00' --progress time,1 --charset=utf8mb4 --since='%s' --until='%s' >mysql_slow.json", ptQueryDigestPath, *logAddress, *startTime, *endTime)
+		ptCmd = fmt.Sprintf("%s %s --output json --noversion-check --set-vars time_zone='+8:00' --progress time,1 --charset=utf8mb4 --since='%s' --until='%s' >mysql_slow.json", ptQueryDigestPath, strings.Join(logAddresses, " "), *startTime, *endTime)
 	}
 
 	printColoredInfo("yellow", "正在执行日志分析...")
@@ -322,10 +355,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	// 生成基于原始日志文件名的输出文件名
-	baseFileName := getBaseFileName(*logAddress)
+	// 生成输出文件名
 	currentTime := time.Now().Format("2006-01-02-15-04")
-	fileName := fmt.Sprintf("%s-%s.html", baseFileName, currentTime)
+	fileName := fmt.Sprintf("slowsql-analysis-%s.html", currentTime)
 
 	printColoredInfo("yellow", "正在生成分析报告: %s", fileName)
 
@@ -393,6 +425,13 @@ func main() {
 
 	sort.Sort(SlowSqlInfoSliceDecrement(slowSqlInfos))
 
+	// 创建报告数据
+	reportData := ReportData{
+		GenerateTime: time.Now().Format("2006-01-02 15:04:05"),
+		SlowQueries:  slowSqlInfos,
+		LogFiles:     logAddresses,
+	}
+
 	// 添加自定义模板函数
 	funcMap := template.FuncMap{
 		"float64": func(s string) float64 {
@@ -416,6 +455,12 @@ func main() {
 				return fmt.Sprintf("%.0fμs", t*1000000)
 			}
 		},
+		"join": func(arr []string, sep string) string {
+			return strings.Join(arr, sep)
+		},
+		"add": func(a, b int) int {
+			return a + b
+		},
 	}
 
 	printColoredInfo("yellow", "正在生成HTML报告...")
@@ -433,7 +478,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = tmpl.Execute(newFile, slowSqlInfos)
+	err = tmpl.Execute(newFile, reportData)
 	if err != nil {
 		printColoredInfo("red", "生成HTML报告失败: %s", err.Error())
 		os.Exit(1)
@@ -445,6 +490,7 @@ func main() {
 	printDivider()
 	printColoredInfo("green", "分析完成!")
 	printColoredInfo("blue", "统计信息:")
+	printColoredInfo("blue", "- 分析的日志文件数: %d", len(logAddresses))
 	printColoredInfo("blue", "- 总分析SQL数: %d", len(slowSqlInfos))
 	printColoredInfo("blue", "- 分析耗时: %.2f秒", time.Since(execStartTime).Seconds())
 	printColoredInfo("blue", "- 报告文件: %s", fileName)
@@ -455,7 +501,7 @@ func main() {
 		startWebServer(*port, fileName)
 	} else {
 		printColoredInfo("blue", "\n提示: 使用 -port 参数可启动Web服务访问报告")
-		printColoredInfo("blue", "示例: ./slowsql-analysis -f %s -port 6033\n", *logAddress)
+		printColoredInfo("blue", "示例: ./slowsql-analysis -f %s -port 6033\n", strings.Join(logAddresses, " -f "))
 	}
 }
 

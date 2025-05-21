@@ -110,7 +110,7 @@
                     <th>查询次数</th>
                     <th>平均执行时间</th>
                     <th>最大执行时间</th>
-                    <th>95%执行时间</th>
+                    <th>95%执行时间（参考标准）</th>
                     <th>总扫描行数</th>
                     <th>平均扫描行数</th>
                     <th>最大扫描行数</th>
@@ -120,7 +120,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {{range .}}
+                {{range .SlowQueries}}
                     {{if gt (float64 .Time95) 10.0}}
                     <tr class="query-time-severe">
                     {{else if gt (float64 .Time95) 5.0}}
@@ -153,7 +153,7 @@
                 </tbody>
             </table>
 
-            {{range .}}
+            {{range .SlowQueries}}
             <!-- SQL详情模态框 -->
             <div class="modal fade" id="modal-{{.Id}}" tabindex="-1" role="dialog">
                 <div class="modal-dialog">
@@ -166,7 +166,7 @@
                             <div class="sql-details">
                                 <div class="alert alert-info">
                                     <h4><i class="glyphicon glyphicon-info-sign"></i> 查询相似性说明</h4>
-                                    <p>pt-query-digest工具会对SQL查询进行规范化处理和分组统计：</p>
+                                    <p>pt-query-digest对SQL查询进行规范化处理和分组统计：</p>
                                     <ul>
                                         <li>将具体的参数值替换为占位符（如：数字替换为"?"）</li>
                                         <li>移除注释和多余的空白字符</li>
@@ -195,7 +195,7 @@
                                     <tr>
                                         <td class="stats-label">最大执行时间</td>
                                         <td>{{formatTime .TimeMax}}</td>
-                                        <td class="stats-label">95%执行时间</td>
+                                        <td class="stats-label">95%执行时间（参考标准）</td>
                                         <td>{{formatTime .Time95}}</td>
                                     </tr>
                                     <tr>
