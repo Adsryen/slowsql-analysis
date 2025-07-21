@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"embed"
 	"encoding/json"
 	"flag"
@@ -35,31 +36,35 @@ type ReportData struct {
 
 const helpText = `慢查询日志分析工具 v1.0
 
+一个用于解析和可视化MySQL慢查询日志的工具。
+
 用法: 
-    ./slowsql-analysis -f <慢查询日志路径1> [-f <慢查询日志路径2> ...] [-port <端口>] [-startTime <开始时间>] [-endTime <结束时间>]
+    ./slowsql-analysis [参数]
 
 参数:
-    -f          慢查询日志文件路径（可指定多个）
-    -port       Web服务端口，设置后可通过浏览器访问报告
-    -startTime  开始时间 (可选，格式: yyyy-mm-dd HH:mm:ss)
-    -endTime    结束时间 (可选，格式: yyyy-mm-dd HH:mm:ss)
+    -f <路径>       慢查询日志文件路径 (必需, 可指定多个)。
+    -port <端口>    指定一个端口号来启动Web服务，以便通过浏览器在线查看报告 (可选)。
+    -startTime <时间> 开始时间，用于筛选指定时间范围内的慢查询 (可选, 格式: "yyyy-mm-dd HH:mm:ss")。
+    -endTime <时间>   结束时间，用法同上 (可选, 格式: "yyyy-mm-dd HH:mm:ss")。
+    -d, --debug     启用调试模式，输出详细的执行日志，用于排查问题 (可选)。
+    -h, --help      显示此帮助信息。
 
 示例:
-    1. 基本分析:
-       ./slowsql-analysis -f /var/log/mysql-slow1.log -f /var/log/mysql-slow2.log
+    1. 基本分析 (分析单个日志文件):
+       ./slowsql-analysis -f /var/log/mysql-slow.log
 
-    2. 启动Web服务:
-       ./slowsql-analysis -f /var/log/mysql-slow1.log -f /var/log/mysql-slow2.log -port 6033
+    2. 分析多个日志并启动Web服务:
+       ./slowsql-analysis -f /path/to/log1.log -f /path/to/log2.log -port 8080
 
-    3. 指定时间范围:
-       ./slowsql-analysis -f /var/log/mysql-slow1.log -f /var/log/mysql-slow2.log -startTime="2024-04-16 00:00:00" -endTime="2024-04-16 23:59:59"
+    3. 分析指定时间范围的日志:
+       ./slowsql-analysis -f /var/log/mysql-slow.log -startTime="2024-04-16 00:00:00" -endTime="2024-04-16 23:59:59"
 
-    4. 完整功能:
-       ./slowsql-analysis -f /var/log/mysql-slow1.log -f /var/log/mysql-slow2.log -port 6033 -startTime="2024-04-16 00:00:00" -endTime="2024-04-16 23:59:59"
+    4. 启用调试模式进行分析:
+       ./slowsql-analysis -f /var/log/mysql-slow.log -d
 
 输出:
-    生成的报告文件格式: slowsql-analysis-<生成时间>.html
-    如果指定了端口，可以通过浏览器访问: http://<IP>:<端口>/<报告文件名>`
+    - 默认情况下，程序会在当前目录生成一个名为 'slowsql-analysis-YYYY-MM-DD-HH-MM.html' 的HTML报告。
+    - 如果指定了 -port 参数, 程序会启动一个Web服务，你可以通过 'http://<你的IP>:<端口>/<报告文件名>' 访问报告。`
 
 func init() {
 	flag.Usage = func() {
@@ -72,6 +77,11 @@ var logAddresses arrayFlags
 var startTime = flag.String("startTime", "", "分析开始时间 (格式: yyyy-mm-dd HH:mm:ss)")
 var endTime = flag.String("endTime", "", "分析结束时间 (格式: yyyy-mm-dd HH:mm:ss)")
 var port = flag.Int("port", 0, "Web服务端口，设置后可通过浏览器访问报告")
+var debug = flag.Bool("debug", false, "启用调试模式，输出详细日志")
+var debugShort = flag.Bool("d", false, "启用调试模式 (shorthand for --debug)")
+
+// isDebug 标记是否启用调试模式
+var isDebug bool
 
 // 自定义类型用于支持多个-f参数
 type arrayFlags []string
@@ -93,13 +103,22 @@ func printDivider() {
 // 打印带颜色的信息
 func printColoredInfo(color string, format string, args ...interface{}) {
 	colorCode := map[string]string{
-		"red":    "\033[31m",
-		"green":  "\033[32m",
-		"yellow": "\033[33m",
-		"blue":   "\033[34m",
-		"reset":  "\033[0m",
+		"red":     "\033[31m",
+		"green":   "\033[32m",
+		"yellow":  "\033[33m",
+		"blue":    "\033[34m",
+		"magenta": "\033[35m",
+		"reset":   "\033[0m",
 	}
 	fmt.Printf(colorCode[color]+format+colorCode["reset"]+"\n", args...)
+}
+
+// 打印调试日志
+func logDebug(format string, args ...interface{}) {
+	if isDebug {
+		fullFormat := "[DEBUG] " + format
+		printColoredInfo("magenta", fullFormat, args...)
+	}
 }
 
 func hasDuplicate(items []string, target string) bool {
@@ -117,10 +136,10 @@ func (s SlowSqlInfoSliceDecrement) Len() int { return len(s) }
 
 func (s SlowSqlInfoSliceDecrement) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
-func (s SlowSqlInfoSliceDecrement) Less(i, j int) bool { 
+func (s SlowSqlInfoSliceDecrement) Less(i, j int) bool {
 	time95i, _ := strconv.ParseFloat(s[i].Time95, 64)
 	time95j, _ := strconv.ParseFloat(s[j].Time95, 64)
-	return time95i > time95j 
+	return time95i > time95j
 }
 
 func getBaseFileName(logPath string) string {
@@ -172,7 +191,7 @@ func getLocalIPs() ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// 分割并清理IP地址
 	ips := strings.Fields(string(output))
 	return ips, nil
@@ -277,24 +296,32 @@ func formatMysqlTimestamp(timestamp string) string {
 
 func main() {
 	execStartTime := time.Now()
-	
+
 	flag.Parse()
+	isDebug = *debug || *debugShort
+
+	logDebug("调试模式已启用")
+	logDebug("命令行参数: %v", os.Args)
 
 	if len(logAddresses) == 0 {
 		printColoredInfo("blue", "使用方法: ./slowsql-analysis -f <慢查询日志路径1> [-f <慢查询日志路径2> ...] [-port <端口>]")
 		printColoredInfo("blue", "示例: ./slowsql-analysis -f /var/log/mysql-slow1.log -f /var/log/mysql-slow2.log -port 6033")
 		printColoredInfo("yellow", "请输入慢查询日志文件路径: ")
-		
+
 		// 读取用户输入
 		var input string
 		fmt.Scanln(&input)
-		
+
 		if input == "" {
 			os.Exit(1)
 		}
-		
+
 		logAddresses = append(logAddresses, input)
 	}
+
+	logDebug("分析的日志文件: %v", logAddresses)
+	logDebug("开始时间: %q, 结束时间: %q", *startTime, *endTime)
+	logDebug("Web服务端口: %d", *port)
 
 	printDivider()
 	printColoredInfo("blue", "开始分析慢查询日志...")
@@ -308,25 +335,31 @@ func main() {
 
 	// 检查系统环境
 	checkSystemEnvironment()
-	
+
 	// 检查 Perl 模块
 	checkPerlModules()
 
+	logDebug("环境检查完成")
+
 	// 创建临时目录
+	logDebug("正在创建临时目录...")
 	tempDir, err := os.MkdirTemp("", "slowsql-analysis")
 	if err != nil {
 		printColoredInfo("red", "创建临时目录失败: %s", err.Error())
 		os.Exit(1)
 	}
+	logDebug("临时目录已创建: %s", tempDir)
 	defer os.RemoveAll(tempDir)
 
 	// 将pt-query-digest写入临时目录
 	ptQueryDigestPath := filepath.Join(tempDir, "pt-query-digest")
+	logDebug("准备将 pt-query-digest 写入: %s", ptQueryDigestPath)
 	err = os.WriteFile(ptQueryDigestPath, ptQueryDigest, 0755)
 	if err != nil {
 		printColoredInfo("red", "写入pt-query-digest失败: %s", err.Error())
 		os.Exit(1)
 	}
+	logDebug("pt-query-digest 写入成功")
 
 	// 检查并设置权限
 	if err := checkAndSetPermissions(ptQueryDigestPath); err != nil {
@@ -350,13 +383,15 @@ func main() {
 	}
 
 	printColoredInfo("yellow", "正在执行日志分析...")
+	logDebug("将要执行的分析命令:\n%s", ptCmd)
 	cmd := exec.Command("/bin/bash", "-c", ptCmd)
-	
+
 	// 捕获标准错误输出
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
-	
+
 	if err := cmd.Run(); err != nil {
+		logDebug("pt-query-digest 命令执行出错: %v", err)
 		if _, ok := err.(*exec.ExitError); ok {
 			printColoredInfo("red", "分析过程出错: %v", err)
 			printColoredInfo("yellow", "详细错误信息:")
@@ -368,6 +403,65 @@ func main() {
 			printColoredInfo("red", "执行命令失败: %v", err)
 		}
 		os.Exit(1)
+	}
+
+	logDebug("pt-query-digest 命令执行完成")
+
+	// 检查生成的json文件
+	jsonPath := "mysql_slow.json"
+	logDebug("检查分析结果文件: %s", jsonPath)
+	jsonFileInfo, err := os.Stat(jsonPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			logDebug("错误: 分析结果文件 '%s' 未生成", jsonPath)
+			printColoredInfo("red", "错误: 分析结果文件 '%s' 未生成。可能是 pt-query-digest 执行失败。", jsonPath)
+		} else {
+			logDebug("获取文件 '%s' 信息失败: %v", jsonPath, err)
+			printColoredInfo("red", "获取分析结果文件 '%s' 信息失败: %v", jsonPath, err)
+		}
+		os.Exit(1)
+	}
+
+	logDebug("分析结果文件 '%s' 大小: %d 字节", jsonPath, jsonFileInfo.Size())
+	if jsonFileInfo.Size() == 0 {
+		logDebug("警告: 分析结果文件 '%s' 为空", jsonPath)
+		printColoredInfo("yellow", "分析完成，但在指定的日志文件中未发现慢查询。")
+		printColoredInfo("yellow", "请检查: ")
+		printColoredInfo("yellow", "1. 日志文件路径是否正确。")
+		printColoredInfo("yellow", "2. 日志文件内容是否为有效的慢查询日志格式。")
+		printColoredInfo("yellow", "3. 如果设置了时间范围，请确认该范围内有慢查询。")
+
+		// 打印日志文件头部内容以供诊断
+		if isDebug {
+			printColoredInfo("magenta", "\n[DEBUG] 以下是每个日志文件的开头部分，请检查内容和格式:")
+			for _, logFile := range logAddresses {
+				file, err := os.Open(logFile)
+				if err != nil {
+					logDebug("无法打开日志文件 %s: %v", logFile, err)
+					continue
+				}
+				defer file.Close()
+
+				scanner := bufio.NewScanner(file)
+				lineCount := 0
+				logDebug("--- %s (前10行) ---", logFile)
+				for scanner.Scan() && lineCount < 10 {
+					logDebug(scanner.Text())
+					lineCount++
+				}
+				if err := scanner.Err(); err != nil {
+					logDebug("读取日志文件 %s 时出错: %v", logFile, err)
+				}
+				logDebug("--- 文件内容预览结束 ---")
+			}
+		}
+
+		// 清理空的json文件
+		err := os.Remove(jsonPath)
+		if err != nil {
+			logDebug("清理空json文件失败: %v", err)
+		}
+		os.Exit(0)
 	}
 
 	// 生成输出文件名
@@ -393,6 +487,7 @@ func main() {
 	decoder := json.NewDecoder(file)
 	err = decoder.Decode(&report)
 	if err != nil {
+		logDebug("JSON 解码错误: %v", err)
 		printColoredInfo("red", "解析JSON数据失败: %s", err.Error())
 		os.Exit(1)
 	}
@@ -401,9 +496,11 @@ func main() {
 	allSqlInfo := report.Classes
 
 	printColoredInfo("yellow", "正在处理查询信息...")
-	for _, sqlInfo := range allSqlInfo {
+	logDebug("共发现 %d 种查询类型", len(allSqlInfo))
+	for i, sqlInfo := range allSqlInfo {
 		var allTables []string
 		var slowSqlInfo SlowSqlInfo
+		logDebug("处理第 %d/%d 个查询, Checksum: %s", i+1, len(allSqlInfo), sqlInfo.Checksum)
 		for _, slowTable := range sqlInfo.Tables {
 			s := strings.Split(slowTable.Create, ".")
 			re := regexp.MustCompile("`([^`]+)`")
@@ -439,6 +536,7 @@ func main() {
 	}
 
 	sort.Sort(SlowSqlInfoSliceDecrement(slowSqlInfos))
+	logDebug("所有查询已排序")
 
 	// 创建报告数据
 	reportData := ReportData{
@@ -451,7 +549,7 @@ func main() {
 	if len(report.Classes) > 0 {
 		minTime := report.Classes[0].TsMin
 		maxTime := report.Classes[0].TsMax
-		
+
 		for _, class := range report.Classes {
 			if class.TsMin < minTime {
 				minTime = class.TsMin
@@ -460,10 +558,12 @@ func main() {
 				maxTime = class.TsMax
 			}
 		}
-		
+
 		reportData.StartTime = formatMysqlTimestamp(minTime)
 		reportData.EndTime = formatMysqlTimestamp(maxTime)
 	}
+
+	logDebug("报告数据准备完成。查询数: %d, 日志文件: %v", len(reportData.SlowQueries), reportData.LogFiles)
 
 	// 添加自定义模板函数
 	funcMap := template.FuncMap{
@@ -497,28 +597,34 @@ func main() {
 	}
 
 	printColoredInfo("yellow", "正在生成HTML报告...")
-	
+	logDebug("开始渲染HTML模板...")
+
 	// 使用嵌入的模板文件
 	tmplContent, err := templateFS.ReadFile("template/template.html")
 	if err != nil {
 		printColoredInfo("red", "读取模板文件失败: %s", err.Error())
 		os.Exit(1)
 	}
+	logDebug("模板文件 template/template.html 读取成功")
 
 	tmpl, err := template.New("template.html").Funcs(funcMap).Parse(string(tmplContent))
 	if err != nil {
+		logDebug("HTML模板解析失败: %v", err)
 		printColoredInfo("red", "创建HTML模板失败: %s", err.Error())
 		os.Exit(1)
 	}
 
 	err = tmpl.Execute(newFile, reportData)
 	if err != nil {
+		logDebug("HTML报告生成失败: %v", err)
 		printColoredInfo("red", "生成HTML报告失败: %s", err.Error())
 		os.Exit(1)
 	}
+	logDebug("HTML报告生成成功")
 
 	// 清理临时文件
 	os.Remove("mysql_slow.json")
+	logDebug("已清理临时文件 mysql_slow.json")
 
 	printDivider()
 	printColoredInfo("green", "分析完成!")
@@ -546,7 +652,7 @@ type Report struct {
 			Name string `json:"name"`
 			Size int    `json:"size"`
 		} `json:"files"`
-		QueryCount int `json:"query_count"`
+		QueryCount int    `json:"query_count"`
 		TsMin      string `json:"ts_min"`
 		TsMax      string `json:"ts_max"`
 		Metrics    struct {

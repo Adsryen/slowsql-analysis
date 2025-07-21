@@ -111,8 +111,6 @@ main() {
     build_binary linux amd64 "slowsql-analysis-linux-amd64" || exit 1
     build_binary linux arm64 "slowsql-analysis-linux-arm64" || exit 1
     build_binary windows amd64 "slowsql-analysis-windows-amd64.exe" || exit 1
-    build_binary darwin amd64 "slowsql-analysis-darwin-amd64" || exit 1
-    build_binary darwin arm64 "slowsql-analysis-darwin-arm64" || exit 1
     
     print_success "编译完成！"
     print_info "编译结果在 build 目录下:"
@@ -122,8 +120,6 @@ main() {
     print_info "1. Linux AMD64 版本: build/slowsql-analysis-linux-amd64"
     print_info "2. Linux ARM64 版本: build/slowsql-analysis-linux-arm64"
     print_info "3. Windows 版本: build/slowsql-analysis-windows-amd64.exe"
-    print_info "4. macOS Intel 版本: build/slowsql-analysis-darwin-amd64"
-    print_info "5. macOS M1/M2 版本: build/slowsql-analysis-darwin-arm64"
     
     print_warning "注意: 如果在 CentOS 上运行遇到问题，请尝试:"
     print_info "1. 确保有执行权限: chmod +x slowsql-analysis-linux-amd64"
