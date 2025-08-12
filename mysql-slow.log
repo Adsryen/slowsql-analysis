@@ -1,0 +1,656 @@
+mariadbd, Version: 10.7.7-MariaDB-1:10.7.7+maria~ubu2004-log (mariadb.org binary distribution). started with:
+Tcp port: 3306  Unix socket: /run/mysqld/mysqld.sock
+Time		    Id Command	Argument
+# Time: 250811 19:45:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 210331  Schema: ehr  QC_hit: No
+# Query_time: 2.090977  Lock_time: 0.001929  Rows_sent: 0  Rows_examined: 249440
+# Rows_affected: 0  Bytes_sent: 11
+use ehr;
+SET timestamp=1754941502;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 19:45:00.868';
+# Time: 250811 19:45:03
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 210362  Schema: ehr  QC_hit: No
+# Query_time: 2.248788  Lock_time: 0.002100  Rows_sent: 0  Rows_examined: 249440
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754941503;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 19:45:00.886';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 210363  Schema: ehr  QC_hit: No
+# Query_time: 2.223730  Lock_time: 0.002075  Rows_sent: 0  Rows_examined: 249440
+# Rows_affected: 3  Bytes_sent: 11
+SET timestamp=1754941503;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 19:45:01.094';
+# Time: 250811 21:00:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 210362  Schema: ehr  QC_hit: No
+# Query_time: 2.082050  Lock_time: 0.001928  Rows_sent: 0  Rows_examined: 249736
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754946002;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 21:00:00.130';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 208801  Schema: ehr  QC_hit: No
+# Query_time: 2.445914  Lock_time: 0.002293  Rows_sent: 0  Rows_examined: 249736
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754946002;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 21:00:00.115';
+# Time: 250811 22:30:04
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 211439  Schema: ehr  QC_hit: No
+# Query_time: 2.006380  Lock_time: 0.001882  Rows_sent: 0  Rows_examined: 250120
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754951404;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:02.167';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 211433  Schema: ehr  QC_hit: No
+# Query_time: 2.221074  Lock_time: 0.002051  Rows_sent: 0  Rows_examined: 250120
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754951404;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:02.170';
+# User@Host: root[root] @  [192.168.31.168]
+# Thread_id: 211430  Schema: ehr_dev  QC_hit: No
+# Query_time: 2.057093  Lock_time: 0.001986  Rows_sent: 0  Rows_examined: 128640
+# Rows_affected: 0  Bytes_sent: 11
+use ehr_dev;
+SET timestamp=1754951404;
+delete from `ehr_dev`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:02.341';
+# User@Host: root[root] @  [192.168.31.168]
+# Thread_id: 211349  Schema: ehr_dev  QC_hit: No
+# Query_time: 2.155803  Lock_time: 0.002079  Rows_sent: 0  Rows_examined: 128640
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754951404;
+delete from `ehr_dev`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:02.343';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 211440  Schema: ehr  QC_hit: No
+# Query_time: 2.437308  Lock_time: 0.002264  Rows_sent: 0  Rows_examined: 250120
+# Rows_affected: 0  Bytes_sent: 11
+use ehr;
+SET timestamp=1754951404;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:02.172';
+# User@Host: root[root] @  [192.168.31.168]
+# Thread_id: 211422  Schema: ehr_dev  QC_hit: No
+# Query_time: 2.279467  Lock_time: 0.002222  Rows_sent: 0  Rows_examined: 128640
+# Rows_affected: 0  Bytes_sent: 11
+use ehr_dev;
+SET timestamp=1754951404;
+delete from `ehr_dev`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:02.344';
+# User@Host: root[root] @  [192.168.31.168]
+# Thread_id: 211431  Schema: ehr_dev  QC_hit: No
+# Query_time: 2.378628  Lock_time: 0.002358  Rows_sent: 0  Rows_examined: 128640
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754951404;
+delete from `ehr_dev`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:02.344';
+# User@Host: root[root] @  [192.168.31.168]
+# Thread_id: 211444  Schema: ehr_dev  QC_hit: No
+# Query_time: 2.471103  Lock_time: 0.002547  Rows_sent: 0  Rows_examined: 128640
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754951404;
+delete from `ehr_dev`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:02.345';
+# Time: 250811 22:30:05
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 211434  Schema: ehr  QC_hit: No
+# Query_time: 2.261888  Lock_time: 0.002025  Rows_sent: 0  Rows_examined: 250120
+# Rows_affected: 0  Bytes_sent: 11
+use ehr;
+SET timestamp=1754951405;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:03.017';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 211428  Schema: ehr  QC_hit: No
+# Query_time: 2.439270  Lock_time: 0.002286  Rows_sent: 0  Rows_examined: 250120
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754951405;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:03.017';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 211429  Schema: ehr  QC_hit: No
+# Query_time: 2.615100  Lock_time: 0.002582  Rows_sent: 0  Rows_examined: 250120
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754951405;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:03.017';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 211410  Schema: ehr  QC_hit: No
+# Query_time: 2.803021  Lock_time: 0.002718  Rows_sent: 0  Rows_examined: 250120
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754951405;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:03.017';
+# Time: 250811 22:30:06
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 211420  Schema: ehr  QC_hit: No
+# Query_time: 3.025389  Lock_time: 0.002923  Rows_sent: 0  Rows_examined: 250120
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754951406;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:03.017';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 211432  Schema: ehr  QC_hit: No
+# Query_time: 3.201209  Lock_time: 0.003128  Rows_sent: 0  Rows_examined: 250120
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754951406;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:03.019';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 211424  Schema: ehr  QC_hit: No
+# Query_time: 3.379044  Lock_time: 0.003266  Rows_sent: 0  Rows_examined: 250120
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754951406;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:03.019';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 211419  Schema: ehr  QC_hit: No
+# Query_time: 3.561586  Lock_time: 0.003465  Rows_sent: 0  Rows_examined: 250120
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754951406;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:03.019';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 211445  Schema: ehr  QC_hit: No
+# Query_time: 3.739084  Lock_time: 0.003678  Rows_sent: 0  Rows_examined: 250120
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754951406;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:03.019';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 211401  Schema: ehr  QC_hit: No
+# Query_time: 3.917116  Lock_time: 0.003822  Rows_sent: 0  Rows_examined: 250120
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754951406;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-11 22:30:03.019';
+# Time: 250812  0:10:03
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 212090  Schema: ehr  QC_hit: No
+# Query_time: 2.027512  Lock_time: 0.001882  Rows_sent: 0  Rows_examined: 250496
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754957403;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 00:10:01.068';
+# Time: 250812  0:45:03
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 212418  Schema: ehr  QC_hit: No
+# Query_time: 2.055991  Lock_time: 0.001881  Rows_sent: 0  Rows_examined: 250637
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754959503;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 00:45:01.266';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 212255  Schema: ehr  QC_hit: No
+# Query_time: 2.562236  Lock_time: 0.002423  Rows_sent: 0  Rows_examined: 250637
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754959503;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 00:45:00.936';
+# Time: 250812  0:53:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 212485  Schema: ehr  QC_hit: No
+# Query_time: 2.050265  Lock_time: 0.001481  Rows_sent: 0  Rows_examined: 250668
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754959982;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 00:53:00.216';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 212486  Schema: ehr  QC_hit: No
+# Query_time: 2.228536  Lock_time: 0.002076  Rows_sent: 0  Rows_examined: 250668
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754959982;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 00:53:00.217';
+# Time: 250812  0:55:02
+# User@Host: root[root] @  [192.168.31.168]
+# Thread_id: 212513  Schema: ehr_dev  QC_hit: No
+# Query_time: 2.086724  Lock_time: 0.001607  Rows_sent: 0  Rows_examined: 129018
+# Rows_affected: 0  Bytes_sent: 11
+use ehr_dev;
+SET timestamp=1754960102;
+delete from `ehr_dev`.`drs_api_call_log` where `created_at` < '2025-07-12 00:55:00.467';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 212509  Schema: ehr  QC_hit: No
+# Query_time: 2.406003  Lock_time: 0.001930  Rows_sent: 0  Rows_examined: 250676
+# Rows_affected: 0  Bytes_sent: 11
+use ehr;
+SET timestamp=1754960102;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 00:55:00.283';
+# Time: 250812  0:55:03
+# User@Host: root[root] @  [192.168.31.168]
+# Thread_id: 208018  Schema: ehr_dev  QC_hit: No
+# Query_time: 2.633891  Lock_time: 0.002097  Rows_sent: 0  Rows_examined: 129018
+# Rows_affected: 0  Bytes_sent: 11
+use ehr_dev;
+SET timestamp=1754960103;
+delete from `ehr_dev`.`drs_api_call_log` where `created_at` < '2025-07-12 00:55:00.483';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 212510  Schema: ehr  QC_hit: No
+# Query_time: 3.067342  Lock_time: 0.002586  Rows_sent: 0  Rows_examined: 250676
+# Rows_affected: 0  Bytes_sent: 11
+use ehr;
+SET timestamp=1754960103;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 00:55:00.154';
+# User@Host: root[root] @  [192.168.31.168]
+# Thread_id: 212516  Schema: ehr_dev  QC_hit: No
+# Query_time: 3.234926  Lock_time: 0.002691  Rows_sent: 0  Rows_examined: 129018
+# Rows_affected: 0  Bytes_sent: 11
+use ehr_dev;
+SET timestamp=1754960103;
+delete from `ehr_dev`.`drs_api_call_log` where `created_at` < '2025-07-12 00:55:00.465';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 212491  Schema: ehr  QC_hit: No
+# Query_time: 3.475662  Lock_time: 0.002959  Rows_sent: 0  Rows_examined: 250676
+# Rows_affected: 0  Bytes_sent: 11
+use ehr;
+SET timestamp=1754960103;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 00:55:00.273';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 212255  Schema: ehr  QC_hit: No
+# Query_time: 3.674966  Lock_time: 0.003575  Rows_sent: 0  Rows_examined: 250676
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754960103;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 00:55:00.278';
+# Time: 250812  0:55:04
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 212489  Schema: ehr  QC_hit: No
+# Query_time: 4.006068  Lock_time: 0.003861  Rows_sent: 0  Rows_examined: 250676
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754960104;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 00:55:00.158';
+# Time: 250812  1:07:12
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 212647  Schema: ehr  QC_hit: No
+# Query_time: 2.564781  Lock_time: 0.000094  Rows_sent: 6416  Rows_examined: 44463
+# Rows_affected: 0  Bytes_sent: 3216098
+SET timestamp=1754960832;
+select `pers_employee`.* from `ehr`.`pers_employee` left join `ehr`.`org_department` on `pers_employee`.`dept_id` = `ehr`.`org_department`.`id` left join `ehr`.`pers_zwfl` on `pers_employee`.`zwfl` = `ehr`.`pers_zwfl`.`id` where ((`pers_employee`.`status` = 1) and (`pers_employee`.`dept_id` != 69) and (`pers_employee`.`ygxs` != 28) and (`pers_employee`.`ygxs` != 33) and (`pers_employee`.`ygxs` != 39) and (`pers_employee`.`ygxs` != 40) and (`pers_employee`.`category` != '20') and (`pers_employee`.`deleted` = 0 or `pers_employee`.`deleted` is null)) order by `pers_employee`.`ddpx` asc, `org_department`.`sort_order` asc, `pers_zwfl`.`zwflpx` desc;
+# Time: 250812  1:20:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 212768  Schema: ehr  QC_hit: No
+# Query_time: 2.252979  Lock_time: 0.002104  Rows_sent: 0  Rows_examined: 250776
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754961602;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 01:20:00.254';
+# Time: 250812  1:45:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 213000  Schema: ehr  QC_hit: No
+# Query_time: 2.151940  Lock_time: 0.001998  Rows_sent: 0  Rows_examined: 250882
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754963102;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 01:45:00.544';
+# Time: 250812  1:49:36
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 213084  Schema: ehr  QC_hit: No
+# Query_time: 3.701955  Lock_time: 0.000102  Rows_sent: 0  Rows_examined: 4697026
+# Rows_affected: 312  Bytes_sent: 60
+SET timestamp=1754963376;
+update pers_medical a join pers_dead b on a.emp_id=b.emp_id set  a.jl= CONCAT('员工死亡，原失效日期', a.end_date), a.end_date=b.deadtime where b.deadtime is not null;
+# Time: 250812  1:50:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 213100  Schema: ehr  QC_hit: No
+# Query_time: 2.078447  Lock_time: 0.001917  Rows_sent: 0  Rows_examined: 250900
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754963402;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 01:50:00.550';
+# Time: 250812  2:15:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 213426  Schema: ehr  QC_hit: No
+# Query_time: 2.371966  Lock_time: 0.002209  Rows_sent: 0  Rows_examined: 251001
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754964902;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 02:15:00.146';
+# Time: 250812  3:45:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 214214  Schema: ehr  QC_hit: No
+# Query_time: 2.009830  Lock_time: 0.001855  Rows_sent: 0  Rows_examined: 251370
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754970302;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 03:45:00.561';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 214292  Schema: ehr  QC_hit: No
+# Query_time: 2.106602  Lock_time: 0.001958  Rows_sent: 0  Rows_examined: 251370
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754970302;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 03:45:00.825';
+# Time: 250812  3:45:03
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 214302  Schema: ehr  QC_hit: No
+# Query_time: 2.551451  Lock_time: 0.002406  Rows_sent: 0  Rows_examined: 251370
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754970303;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 03:45:00.555';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 214288  Schema: ehr  QC_hit: No
+# Query_time: 2.471565  Lock_time: 0.002321  Rows_sent: 0  Rows_examined: 251370
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754970303;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 03:45:00.818';
+# Time: 250812  4:45:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 214478  Schema: ehr  QC_hit: No
+# Query_time: 2.163070  Lock_time: 0.002012  Rows_sent: 0  Rows_examined: 251608
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754973902;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 04:45:00.538';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 214777  Schema: ehr  QC_hit: No
+# Query_time: 2.076386  Lock_time: 0.001937  Rows_sent: 0  Rows_examined: 251608
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754973902;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 04:45:00.804';
+# Time: 250812  4:45:03
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 214479  Schema: ehr  QC_hit: No
+# Query_time: 2.910047  Lock_time: 0.002767  Rows_sent: 0  Rows_examined: 251608
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754973903;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 04:45:00.149';
+# Time: 250812  6:32:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 215623  Schema: ehr  QC_hit: No
+# Query_time: 2.106616  Lock_time: 0.001925  Rows_sent: 0  Rows_examined: 252036
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754980322;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 06:32:00.197';
+# Time: 250812  6:45:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 215747  Schema: ehr  QC_hit: No
+# Query_time: 2.373235  Lock_time: 0.002232  Rows_sent: 0  Rows_examined: 252096
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754981102;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 06:45:00.615';
+# Time: 250812  6:45:03
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 215724  Schema: ehr  QC_hit: No
+# Query_time: 2.423146  Lock_time: 0.002267  Rows_sent: 0  Rows_examined: 252096
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754981103;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 06:45:00.757';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 215733  Schema: ehr  QC_hit: No
+# Query_time: 2.260786  Lock_time: 0.002102  Rows_sent: 0  Rows_examined: 252096
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754981103;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 06:45:01.106';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 215755  Schema: ehr  QC_hit: No
+# Query_time: 2.446247  Lock_time: 0.002292  Rows_sent: 0  Rows_examined: 252096
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754981103;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 06:45:01.100';
+# Time: 250812  7:10:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216030  Schema: ehr  QC_hit: No
+# Query_time: 2.166544  Lock_time: 0.001948  Rows_sent: 0  Rows_examined: 252199
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754982602;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:10:00.166';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216017  Schema: ehr  QC_hit: No
+# Query_time: 2.347918  Lock_time: 0.002191  Rows_sent: 0  Rows_examined: 252199
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754982602;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:10:00.166';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216018  Schema: ehr  QC_hit: No
+# Query_time: 2.124610  Lock_time: 0.001967  Rows_sent: 0  Rows_examined: 252199
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754982602;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:10:00.573';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216020  Schema: ehr  QC_hit: No
+# Query_time: 2.314121  Lock_time: 0.002162  Rows_sent: 0  Rows_examined: 252199
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754982602;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:10:00.573';
+# Time: 250812  7:10:03
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 215994  Schema: ehr  QC_hit: No
+# Query_time: 2.492166  Lock_time: 0.002336  Rows_sent: 0  Rows_examined: 252199
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754982603;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:10:00.578';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216014  Schema: ehr  QC_hit: No
+# Query_time: 2.698948  Lock_time: 0.002534  Rows_sent: 0  Rows_examined: 252199
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754982603;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:10:00.572';
+# Time: 250812  7:20:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216115  Schema: ehr  QC_hit: No
+# Query_time: 2.098200  Lock_time: 0.001938  Rows_sent: 0  Rows_examined: 252240
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754983202;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:20:00.198';
+# Time: 250812  7:30:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216271  Schema: ehr  QC_hit: No
+# Query_time: 2.183909  Lock_time: 0.001143  Rows_sent: 0  Rows_examined: 252278
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754983802;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:30:00.578';
+# Time: 250812  7:30:03
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216268  Schema: ehr  QC_hit: No
+# Query_time: 3.196877  Lock_time: 0.002082  Rows_sent: 0  Rows_examined: 252280
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754983803;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:30:00.715';
+# Time: 250812  7:30:04
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216272  Schema: ehr  QC_hit: No
+# Query_time: 4.196067  Lock_time: 0.003241  Rows_sent: 0  Rows_examined: 252280
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754983804;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:30:00.718';
+# Time: 250812  7:30:05
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216267  Schema: ehr  QC_hit: No
+# Query_time: 5.241724  Lock_time: 0.004239  Rows_sent: 0  Rows_examined: 252280
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754983805;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:30:00.717';
+# Time: 250812  7:30:07
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216270  Schema: ehr  QC_hit: No
+# Query_time: 6.434584  Lock_time: 0.005423  Rows_sent: 0  Rows_examined: 252280
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754983807;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:30:00.579';
+# Time: 250812  7:30:08
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216250  Schema: ehr  QC_hit: No
+# Query_time: 5.102171  Lock_time: 0.004179  Rows_sent: 0  Rows_examined: 252280
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754983808;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:30:02.932';
+# Time: 250812  7:30:09
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216206  Schema: ehr  QC_hit: No
+# Query_time: 6.160282  Lock_time: 0.005150  Rows_sent: 0  Rows_examined: 252280
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754983809;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:30:02.933';
+# Time: 250812  7:31:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216275  Schema: ehr  QC_hit: No
+# Query_time: 2.040647  Lock_time: 0.001075  Rows_sent: 0  Rows_examined: 252284
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754983862;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:31:00.374';
+# Time: 250812  7:31:03
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216285  Schema: ehr  QC_hit: No
+# Query_time: 2.969954  Lock_time: 0.002065  Rows_sent: 0  Rows_examined: 252284
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754983863;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:31:00.377';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216286  Schema: ehr  QC_hit: No
+# Query_time: 3.157791  Lock_time: 0.002997  Rows_sent: 0  Rows_examined: 252284
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754983863;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:31:00.379';
+# Time: 250812  7:32:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216295  Schema: ehr  QC_hit: No
+# Query_time: 2.141288  Lock_time: 0.001771  Rows_sent: 0  Rows_examined: 252288
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754983922;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:32:00.287';
+# Time: 250812  7:32:03
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216294  Schema: ehr  QC_hit: No
+# Query_time: 2.816791  Lock_time: 0.002167  Rows_sent: 0  Rows_examined: 252288
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754983923;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:32:00.293';
+# Time: 250812  7:35:08
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216317  Schema: ehr  QC_hit: No
+# Query_time: 13.758415  Lock_time: 0.000109  Rows_sent: 24686  Rows_examined: 99375
+# Rows_affected: 0  Bytes_sent: 11122084
+SET timestamp=1754984108;
+select `pers_employee`.* from `ehr`.`pers_employee` left join `ehr`.`org_department` on `pers_employee`.`dept_id` = `ehr`.`org_department`.`id` left join `ehr`.`pers_zwfl` on `pers_employee`.`zwfl` = `ehr`.`pers_zwfl`.`id` where ((`pers_employee`.`deleted` = 0 or `pers_employee`.`deleted` is null)) order by `pers_employee`.`ddpx` asc, `org_department`.`sort_order` asc, `pers_zwfl`.`zwflpx` desc;
+# Time: 250812  7:38:02
+# User@Host: root[root] @  [192.168.31.168]
+# Thread_id: 216364  Schema: ehr_dev  QC_hit: No
+# Query_time: 2.113414  Lock_time: 0.001489  Rows_sent: 0  Rows_examined: 130141
+# Rows_affected: 0  Bytes_sent: 11
+use ehr_dev;
+SET timestamp=1754984282;
+delete from `ehr_dev`.`drs_api_call_log` where `created_at` < '2025-07-12 07:38:00.141';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216366  Schema: ehr  QC_hit: No
+# Query_time: 2.120512  Lock_time: 0.001569  Rows_sent: 0  Rows_examined: 252314
+# Rows_affected: 0  Bytes_sent: 11
+use ehr;
+SET timestamp=1754984282;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:38:00.289';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216367  Schema: ehr  QC_hit: No
+# Query_time: 2.355815  Lock_time: 0.002149  Rows_sent: 0  Rows_examined: 252314
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754984282;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:38:00.289';
+# Time: 250812  7:39:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216334  Schema: ehr  QC_hit: No
+# Query_time: 2.064457  Lock_time: 0.001596  Rows_sent: 0  Rows_examined: 252318
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754984342;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:39:00.509';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216372  Schema: ehr  QC_hit: No
+# Query_time: 2.141580  Lock_time: 0.001974  Rows_sent: 0  Rows_examined: 252318
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754984342;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:39:00.623';
+# Time: 250812  7:40:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216328  Schema: ehr  QC_hit: No
+# Query_time: 2.023163  Lock_time: 0.001465  Rows_sent: 0  Rows_examined: 252322
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754984402;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:40:00.830';
+# Time: 250812  7:40:03
+# User@Host: root[root] @  [192.168.31.168]
+# Thread_id: 216364  Schema: ehr_dev  QC_hit: No
+# Query_time: 2.231577  Lock_time: 0.001638  Rows_sent: 0  Rows_examined: 130146
+# Rows_affected: 0  Bytes_sent: 11
+use ehr_dev;
+SET timestamp=1754984403;
+delete from `ehr_dev`.`drs_api_call_log` where `created_at` < '2025-07-12 07:40:01.028';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216377  Schema: ehr  QC_hit: No
+# Query_time: 2.298379  Lock_time: 0.001718  Rows_sent: 0  Rows_examined: 252322
+# Rows_affected: 0  Bytes_sent: 11
+use ehr;
+SET timestamp=1754984403;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:40:01.156';
+# User@Host: root[root] @  [192.168.31.168]
+# Thread_id: 216392  Schema: ehr_dev  QC_hit: No
+# Query_time: 2.900165  Lock_time: 0.002394  Rows_sent: 0  Rows_examined: 130146
+# Rows_affected: 0  Bytes_sent: 11
+use ehr_dev;
+SET timestamp=1754984403;
+delete from `ehr_dev`.`drs_api_call_log` where `created_at` < '2025-07-12 07:40:01.011';
+# Time: 250812  7:40:04
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216387  Schema: ehr  QC_hit: No
+# Query_time: 3.209057  Lock_time: 0.002657  Rows_sent: 0  Rows_examined: 252322
+# Rows_affected: 0  Bytes_sent: 11
+use ehr;
+SET timestamp=1754984404;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:40:00.845';
+# User@Host: root[root] @  [192.168.31.168]
+# Thread_id: 216362  Schema: ehr_dev  QC_hit: No
+# Query_time: 3.397345  Lock_time: 0.002930  Rows_sent: 0  Rows_examined: 130146
+# Rows_affected: 0  Bytes_sent: 11
+use ehr_dev;
+SET timestamp=1754984404;
+delete from `ehr_dev`.`drs_api_call_log` where `created_at` < '2025-07-12 07:40:01.028';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216316  Schema: ehr  QC_hit: No
+# Query_time: 3.463328  Lock_time: 0.002919  Rows_sent: 0  Rows_examined: 252322
+# Rows_affected: 0  Bytes_sent: 11
+use ehr;
+SET timestamp=1754984404;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:40:01.155';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216355  Schema: ehr  QC_hit: No
+# Query_time: 3.655589  Lock_time: 0.003498  Rows_sent: 0  Rows_examined: 252322
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754984404;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:40:01.157';
+# Time: 250812  7:40:05
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216334  Schema: ehr  QC_hit: No
+# Query_time: 3.843514  Lock_time: 0.003693  Rows_sent: 0  Rows_examined: 252322
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754984405;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:40:01.157';
+# Time: 250812  7:41:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216404  Schema: ehr  QC_hit: No
+# Query_time: 2.014277  Lock_time: 0.001849  Rows_sent: 0  Rows_examined: 252326
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754984462;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:41:00.278';
+# Time: 250812  7:49:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216425  Schema: ehr  QC_hit: No
+# Query_time: 2.039456  Lock_time: 0.001892  Rows_sent: 0  Rows_examined: 252358
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754984942;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:49:00.330';
+# Time: 250812  7:50:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216467  Schema: ehr  QC_hit: No
+# Query_time: 2.010529  Lock_time: 0.001850  Rows_sent: 0  Rows_examined: 252362
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754985002;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:50:00.643';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216472  Schema: ehr  QC_hit: No
+# Query_time: 2.201959  Lock_time: 0.002035  Rows_sent: 0  Rows_examined: 252362
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754985002;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 07:50:00.643';
+# Time: 250812  8:00:03
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216561  Schema: ehr  QC_hit: No
+# Query_time: 2.090690  Lock_time: 0.001951  Rows_sent: 0  Rows_examined: 252402
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754985603;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 08:00:00.988';
+# Time: 250812  8:25:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216821  Schema: ehr  QC_hit: No
+# Query_time: 2.148073  Lock_time: 0.001902  Rows_sent: 0  Rows_examined: 252504
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754987102;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 08:25:00.354';
+# Time: 250812  8:30:02
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216899  Schema: ehr  QC_hit: No
+# Query_time: 2.153473  Lock_time: 0.002051  Rows_sent: 0  Rows_examined: 252581
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754987402;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 08:30:00.341';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216891  Schema: ehr  QC_hit: No
+# Query_time: 2.031626  Lock_time: 0.001876  Rows_sent: 0  Rows_examined: 252581
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754987402;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 08:30:00.655';
+# User@Host: ehr[ehr] @  [192.168.31.168]
+# Thread_id: 216849  Schema: ehr  QC_hit: No
+# Query_time: 2.227473  Lock_time: 0.002065  Rows_sent: 0  Rows_examined: 252581
+# Rows_affected: 0  Bytes_sent: 11
+SET timestamp=1754987402;
+delete from `ehr`.`drs_api_call_log` where `created_at` < '2025-07-12 08:30:00.656';
